@@ -25,7 +25,8 @@
     "build": "tsc -p tsconfig.json",
     "check": "tsc -p tsconfig.json --noEmit",
     "test": "node --test --import tsx test/*.test.ts",
-    "smoke": "npm run build && node dist/cli.js scan fixtures/workspace-alpha --json --include-all-time"
+    "smoke": "npm run build && npm run fixtures -- .tmp/workspace-alpha && node dist/cli.js scan .tmp/workspace-alpha --json --include-all-time",
+    "fixtures": "node scripts/seed-fixtures.mjs"
   },
   "keywords": [
     "oss",
