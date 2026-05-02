@@ -1,0 +1,15 @@
+{
+  "name": "repo-dirty",
+  "branch": "main",
+  "files": {
+    "README.md": "# repo-dirty\n\nA repo with local work.\n",
+    "src/index.js": "export const answer = 42;\n"
+  },
+  "commits": [
+    { "message": "initial dirty repo", "files": ["README.md", "src/index.js"] }
+  ],
+  "dirty": {
+    "modified": { "src/index.js": "export const answer = 43;\n" },
+    "untracked": { "notes.md": "local notes that should not be ignored\n" }
+  }
+}
