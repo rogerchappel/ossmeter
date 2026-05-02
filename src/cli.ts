@@ -52,7 +52,9 @@ function parseArgs(argv: string[]): CliArgs {
       throw new Error(`Unknown option: ${arg}`);
     }
   }
-  return { command: 'scan', workspace, format, since, includeAllTime, maxDepth };
+  const parsed: CliArgs = { command: 'scan', workspace, format, includeAllTime, maxDepth };
+  if (since) parsed.since = since;
+  return parsed;
 }
 
 async function exists(path: string): Promise<boolean> {
@@ -76,7 +78,8 @@ export async function run(argv = process.argv.slice(2)): Promise<void> {
   }
   const workspace = resolve(args.workspace ?? '.');
   if (!(await exists(workspace))) throw new Error(`Workspace does not exist: ${workspace}`);
-  const report = await scanWorkspace({ workspace, since: args.since, includeAllTime: args.includeAllTime, maxDepth: args.maxDepth });
+  const scanOptions = { workspace, includeAllTime: args.includeAllTime, maxDepth: args.maxDepth, ...(args.since ? { since: args.since } : {}) };
+  const report = await scanWorkspace(scanOptions);
   if (args.format === 'json') console.log(formatJson(report));
   else if (args.format === 'markdown') console.log(formatMarkdown(report));
   else console.log(formatTable(report));
