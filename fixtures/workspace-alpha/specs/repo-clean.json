@@ -1,0 +1,15 @@
+{
+  "name": "repo-clean",
+  "branch": "main",
+  "files": {
+    "README.md": "# repo-clean\n\nA tidy fixture repo.\n",
+    "LICENSE": "MIT\n",
+    "package.json": "{\"name\":\"repo-clean\",\"scripts\":{\"test\":\"node --test\"}}\n",
+    "test/basic.test.js": "import test from 'node:test';\ntest('ok', () => {});\n",
+    ".github/workflows/ci.yml": "name: ci\non: [push]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo ok\n"
+  },
+  "commits": [
+    { "message": "initial clean repo", "files": ["README.md", "LICENSE", "package.json"] },
+    { "message": "add tests and ci", "files": ["test/basic.test.js", ".github/workflows/ci.yml"] }
+  ]
+}
