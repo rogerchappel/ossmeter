@@ -26,6 +26,9 @@
     "check": "tsc -p tsconfig.json --noEmit",
     "test": "node --test --import tsx test/*.test.ts",
     "smoke": "npm run build && npm run fixtures -- .tmp/workspace-alpha && node dist/cli.js scan .tmp/workspace-alpha --json --include-all-time",
+    "package:smoke": "npm run build && node scripts/package-smoke.mjs .",
+    "release:check": "npm run check && npm test && npm run smoke && npm run package:smoke && releasebox check && npm pack --dry-run",
+    "release:notes": "releasebox notes",
     "fixtures": "node scripts/seed-fixtures.mjs"
   },
   "keywords": [
@@ -43,6 +46,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.15.3",
+    "releasebox": "https://github.com/rogerchappel/releasebox/releases/download/v0.1.0/releasebox-0.1.0.tgz",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   },
