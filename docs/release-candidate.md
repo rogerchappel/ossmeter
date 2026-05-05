@@ -1,12 +1,14 @@
 # Release candidate readiness
 
-Generated: 2026-05-05T21:28:35Z
-Branch: `release-candidate/readiness`
+Generated: 2026-05-05T21:31:15Z
+Branch: `rc/release-readiness`
 Base: `main`
 
 ## Verification
 
 Status: PASS
+
+Note: this follow-up PR keeps an open release-readiness review after the earlier `release-candidate/readiness` PR was merged.
 
 Checks run:
 - `npm ci`
@@ -25,11 +27,11 @@ Checks run:
     > ossmeter@0.1.0 test
     > node --test --import tsx test/*.test.ts
     
-    ✔ discoverGitRepositories finds nested git worktrees and skips non-repos (13.727667ms)
-    ✔ formatTable renders summary and dirty worktree state (0.638916ms)
-    ✔ formatMarkdown renders automation-friendly metric table (0.131042ms)
-    ✔ collectQualitySignals scores common project hygiene files (6.757917ms)
-    ✔ scanWorkspace aggregates commits, branches, quality and dirty state (108.159333ms)
+    ✔ discoverGitRepositories finds nested git worktrees and skips non-repos (13.74575ms)
+    ✔ formatTable renders summary and dirty worktree state (0.592084ms)
+    ✔ formatMarkdown renders automation-friendly metric table (0.219458ms)
+    ✔ collectQualitySignals scores common project hygiene files (6.0575ms)
+    ✔ scanWorkspace aggregates commits, branches, quality and dirty state (91.319292ms)
     ℹ tests 5
     ℹ suites 0
     ℹ pass 5
@@ -37,7 +39,7 @@ Checks run:
     ℹ cancelled 0
     ℹ skipped 0
     ℹ todo 0
-    ℹ duration_ms 348.466792
+    ℹ duration_ms 279.701583
     
     > ossmeter@0.1.0 smoke
     > npm run build && npm run fixtures -- .tmp/workspace-alpha && node dist/cli.js scan .tmp/workspace-alpha --json --include-all-time
@@ -50,11 +52,11 @@ Checks run:
     > ossmeter@0.1.0 fixtures
     > node scripts/seed-fixtures.mjs .tmp/workspace-alpha
     
-    /Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter/.tmp/workspace-alpha
+    /Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter-open-pr/.tmp/workspace-alpha
     {
       "summary": {
-        "workspace": "/Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter/.tmp/workspace-alpha",
-        "generatedAt": "2026-05-05T21:28:30.337Z",
+        "workspace": "/Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter-open-pr/.tmp/workspace-alpha",
+        "generatedAt": "2026-05-05T21:31:10.851Z",
         "since": null,
         "includeAllTime": true,
         "repositoriesScanned": 2,
@@ -70,7 +72,7 @@ Checks run:
       "repositories": [
         {
           "name": "repo-clean",
-          "path": "/Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter/.tmp/workspace-alpha/repo-clean",
+          "path": "/Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter-open-pr/.tmp/workspace-alpha/repo-clean",
           "branch": "main",
           "isGitRepository": true,
           "commits": 2,
@@ -94,7 +96,7 @@ Checks run:
         },
         {
           "name": "repo-dirty",
-          "path": "/Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter/.tmp/workspace-alpha/repo-dirty",
+          "path": "/Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter-open-pr/.tmp/workspace-alpha/repo-dirty",
           "branch": "main",
           "isGitRepository": true,
           "commits": 1,
@@ -127,7 +129,7 @@ Checks run:
     > tsc -p tsconfig.json
     
     
-    added 1 package, and audited 2 packages in 361ms
+    added 1 package, and audited 2 packages in 356ms
     
     found 0 vulnerabilities
     ossmeter — local-first OSS sprint metrics
@@ -202,7 +204,7 @@ Checks run:
     npm notice
     ossmeter-0.1.0.tgz
     ```
-    RESULT: 0 (6s)
+    RESULT: 0
     
     ## bash scripts/validate.sh
     ```
@@ -233,11 +235,11 @@ Checks run:
     > ossmeter@0.1.0 test
     > node --test --import tsx test/*.test.ts
     
-    ✔ discoverGitRepositories finds nested git worktrees and skips non-repos (14.119916ms)
-    ✔ formatTable renders summary and dirty worktree state (0.594625ms)
-    ✔ formatMarkdown renders automation-friendly metric table (0.091709ms)
-    ✔ collectQualitySignals scores common project hygiene files (5.952708ms)
-    ✔ scanWorkspace aggregates commits, branches, quality and dirty state (95.744084ms)
+    ✔ discoverGitRepositories finds nested git worktrees and skips non-repos (10.840959ms)
+    ✔ formatTable renders summary and dirty worktree state (0.582709ms)
+    ✔ formatMarkdown renders automation-friendly metric table (0.078584ms)
+    ✔ collectQualitySignals scores common project hygiene files (4.671916ms)
+    ✔ scanWorkspace aggregates commits, branches, quality and dirty state (131.839125ms)
     ℹ tests 5
     ℹ suites 0
     ℹ pass 5
@@ -245,7 +247,7 @@ Checks run:
     ℹ cancelled 0
     ℹ skipped 0
     ℹ todo 0
-    ℹ duration_ms 238.297584
+    ℹ duration_ms 277.12975
     PASS: package script: test
     
     > ossmeter@0.1.0 build
@@ -256,7 +258,7 @@ Checks run:
     
     Validation passed.
     ```
-    RESULT: 0 (2s)
+    RESULT: 0
     
     ## ReleaseBox check
     ```
@@ -274,5 +276,5 @@ Checks run:
     ✅ smoke script: npm run build && npm run fixtures -- .tmp/workspace-alpha && node dist/cli.js scan .tmp/workspace-alpha --json --include-all-time
     ✅ bin entry: {"ossmeter":"./dist/cli.js"}
     ```
-    RESULT: 0 (0s)
+    RESULT: 0
     
