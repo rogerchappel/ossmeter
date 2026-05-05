@@ -1,38 +1,208 @@
 # Release candidate readiness
 
-Generated: 2026-05-05T21:25:56Z
+Generated: 2026-05-05T21:28:35Z
 Branch: `release-candidate/readiness`
-Base: `origin/main`
+Base: `main`
 
 ## Verification
 
-Status: BLOCKED - one or more local readiness checks failed
+Status: PASS
 
 Checks run:
+- `npm ci`
 - `npm run release:check`
 - `bash scripts/validate.sh`
 - `node releasebox check .`
 
 ## Check output summary
 
-    ## npm run release:check
-    ```
-    npm run release:check
-    ```
-    ```text
-    
-    > ossmeter@0.1.0 release:check
-    > npm run check && npm test && npm run smoke && npm run package:smoke && releasebox check && npm pack --dry-run
     
     
     > ossmeter@0.1.0 check
     > tsc -p tsconfig.json --noEmit
     
-    error TS2688: Cannot find type definition file for 'node'.
-      The file is in the program because:
-        Entry point of type library 'node' specified in compilerOptions
+    
+    > ossmeter@0.1.0 test
+    > node --test --import tsx test/*.test.ts
+    
+    ✔ discoverGitRepositories finds nested git worktrees and skips non-repos (13.727667ms)
+    ✔ formatTable renders summary and dirty worktree state (0.638916ms)
+    ✔ formatMarkdown renders automation-friendly metric table (0.131042ms)
+    ✔ collectQualitySignals scores common project hygiene files (6.757917ms)
+    ✔ scanWorkspace aggregates commits, branches, quality and dirty state (108.159333ms)
+    ℹ tests 5
+    ℹ suites 0
+    ℹ pass 5
+    ℹ fail 0
+    ℹ cancelled 0
+    ℹ skipped 0
+    ℹ todo 0
+    ℹ duration_ms 348.466792
+    
+    > ossmeter@0.1.0 smoke
+    > npm run build && npm run fixtures -- .tmp/workspace-alpha && node dist/cli.js scan .tmp/workspace-alpha --json --include-all-time
+    
+    
+    > ossmeter@0.1.0 build
+    > tsc -p tsconfig.json
+    
+    
+    > ossmeter@0.1.0 fixtures
+    > node scripts/seed-fixtures.mjs .tmp/workspace-alpha
+    
+    /Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter/.tmp/workspace-alpha
+    {
+      "summary": {
+        "workspace": "/Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter/.tmp/workspace-alpha",
+        "generatedAt": "2026-05-05T21:28:30.337Z",
+        "since": null,
+        "includeAllTime": true,
+        "repositoriesScanned": 2,
+        "reposTouched": 2,
+        "totalCommits": 3,
+        "totalBranches": 2,
+        "totalFilesChanged": 7,
+        "totalAdditions": 18,
+        "totalDeletions": 0,
+        "reposWithUncommittedWork": 1,
+        "averageQualityScore": 60
+      },
+      "repositories": [
+        {
+          "name": "repo-clean",
+          "path": "/Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter/.tmp/workspace-alpha/repo-clean",
+          "branch": "main",
+          "isGitRepository": true,
+          "commits": 2,
+          "branches": 1,
+          "filesChanged": 5,
+          "additions": 14,
+          "deletions": 0,
+          "hasUncommittedWork": false,
+          "modifiedFiles": 0,
+          "stagedFiles": 0,
+          "untrackedFiles": 0,
+          "quality": {
+            "score": 100,
+            "hasTests": true,
+            "hasCi": true,
+            "hasReadme": true,
+            "hasLicense": true,
+            "hasPackageMetadata": true
+          },
+          "warnings": []
+        },
+        {
+          "name": "repo-dirty",
+          "path": "/Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter/.tmp/workspace-alpha/repo-dirty",
+          "branch": "main",
+          "isGitRepository": true,
+          "commits": 1,
+          "branches": 1,
+          "filesChanged": 2,
+          "additions": 4,
+          "deletions": 0,
+          "hasUncommittedWork": true,
+          "modifiedFiles": 1,
+          "stagedFiles": 0,
+          "untrackedFiles": 1,
+          "quality": {
+            "score": 20,
+            "hasTests": false,
+            "hasCi": false,
+            "hasReadme": true,
+            "hasLicense": false,
+            "hasPackageMetadata": false
+          },
+          "warnings": []
+        }
+      ]
+    }
+    
+    > ossmeter@0.1.0 package:smoke
+    > npm run build && node scripts/package-smoke.mjs .
+    
+    
+    > ossmeter@0.1.0 build
+    > tsc -p tsconfig.json
+    
+    
+    added 1 package, and audited 2 packages in 361ms
+    
+    found 0 vulnerabilities
+    ossmeter — local-first OSS sprint metrics
+    
+    Usage:
+      ossmeter scan <workspace> [--json|--markdown|--table] [--since <date>] [--include-all-time] [--max-depth <n>]
+      ossmeter --help
+      ossmeter --version
+    
+    Examples:
+      ossmeter scan ~/Developer/my-opensource
+      ossmeter scan . --markdown --since "7 days ago"
+      ossmeter scan fixtures/workspace-alpha --json --include-all-time
+    
+    Notes:
+      - No network calls. ossmeter only shells out to local git.
+      - By default commits are counted since midnight; use --include-all-time for fixtures/history.
+    
+    0.1.0
+    package smoke passed for ossmeter-0.1.0.tgz
+    ✅ releasebox config: node-cli
+    ✅ ci workflow: .github/workflows/ci.yml
+    ✅ release dry run workflow: .github/workflows/release-dry-run.yml
+    ✅ task breakdown: docs/TASKS.md
+    ✅ orchestration plan: docs/ORCHESTRATION.md
+    ✅ dependabot config: .github/dependabot.yml
+    ✅ npm test script: node --test --import tsx test/*.test.ts
+    ✅ build script: tsc -p tsconfig.json
+    ✅ smoke script: npm run build && npm run fixtures -- .tmp/workspace-alpha && node dist/cli.js scan .tmp/workspace-alpha --json --include-all-time
+    ✅ bin entry: {"ossmeter":"./dist/cli.js"}
+    npm notice
+    npm notice package: ossmeter@0.1.0
+    npm notice Tarball Contents
+    npm notice 813B CHANGELOG.md
+    npm notice 1.1kB LICENSE
+    npm notice 3.4kB README.md
+    npm notice 1.2kB SECURITY.md
+    npm notice 81B dist/cli.d.ts
+    npm notice 3.8kB dist/cli.js
+    npm notice 3.6kB dist/cli.js.map
+    npm notice 105B dist/discover.d.ts
+    npm notice 1.3kB dist/discover.js
+    npm notice 1.5kB dist/discover.js.map
+    npm notice 244B dist/format.d.ts
+    npm notice 2.7kB dist/format.js
+    npm notice 3.0kB dist/format.js.map
+    npm notice 221B dist/git.d.ts
+    npm notice 866B dist/git.js
+    npm notice 1.1kB dist/git.js.map
+    npm notice 303B dist/index.d.ts
+    npm notice 223B dist/index.js
+    npm notice 255B dist/index.js.map
+    npm notice 1.5kB dist/models.d.ts
+    npm notice 45B dist/models.js
+    npm notice 104B dist/models.js.map
+    npm notice 137B dist/quality.d.ts
+    npm notice 1.5kB dist/quality.js
+    npm notice 1.9kB dist/quality.js.map
+    npm notice 301B dist/scanner.d.ts
+    npm notice 5.4kB dist/scanner.js
+    npm notice 6.3kB dist/scanner.js.map
+    npm notice 1.7kB package.json
+    npm notice Tarball Details
+    npm notice name: ossmeter
+    npm notice version: 0.1.0
+    npm notice filename: ossmeter-0.1.0.tgz
+    npm notice package size: 12.7 kB
+    npm notice unpacked size: 44.6 kB
+    npm notice shasum: 85b7ae806d66324db6467586f23dfabef850b228
+    npm notice integrity: sha512-gp+gyB6+bLOhV[...]Q3pW4MiXn4CYA==
+    npm notice total files: 29
+    npm notice
+    ossmeter-0.1.0.tgz
     ```
-    RESULT: 2 (1s)
+    RESULT: 0 (6s)
     
     ## bash scripts/validate.sh
     ```
@@ -58,134 +228,35 @@ Checks run:
     > ossmeter@0.1.0 check
     > tsc -p tsconfig.json --noEmit
     
-    error TS2688: Cannot find type definition file for 'node'.
-      The file is in the program because:
-        Entry point of type library 'node' specified in compilerOptions
-    FAIL: package script: check
+    PASS: package script: check
     
     > ossmeter@0.1.0 test
     > node --test --import tsx test/*.test.ts
     
-    node:internal/modules/package_json_reader:301
-      throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
-            ^
-    
-    Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'tsx' imported from /Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter/
-        at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9)
-        at packageResolve (node:internal/modules/esm/resolve:764:81)
-        at moduleResolve (node:internal/modules/esm/resolve:855:18)
-        at defaultResolve (node:internal/modules/esm/resolve:988:11)
-        at #cachedDefaultResolve (node:internal/modules/esm/loader:697:20)
-        at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:714:38)
-        at ModuleLoader.resolveSync (node:internal/modules/esm/loader:746:52)
-        at #resolve (node:internal/modules/esm/loader:679:17)
-        at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:599:35)
-        at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:628:32) {
-      code: 'ERR_MODULE_NOT_FOUND'
-    }
-    
-    Node.js v25.8.0
-    ✖ test/discover.test.ts (62.290084ms)
-    node:internal/modules/package_json_reader:301
-      throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
-            ^
-    
-    Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'tsx' imported from /Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter/
-        at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9)
-        at packageResolve (node:internal/modules/esm/resolve:764:81)
-        at moduleResolve (node:internal/modules/esm/resolve:855:18)
-        at defaultResolve (node:internal/modules/esm/resolve:988:11)
-        at #cachedDefaultResolve (node:internal/modules/esm/loader:697:20)
-        at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:714:38)
-        at ModuleLoader.resolveSync (node:internal/modules/esm/loader:746:52)
-        at #resolve (node:internal/modules/esm/loader:679:17)
-        at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:599:35)
-        at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:628:32) {
-      code: 'ERR_MODULE_NOT_FOUND'
-    }
-    
-    Node.js v25.8.0
-    ✖ test/format.test.ts (62.312917ms)
-    node:internal/modules/package_json_reader:301
-      throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
-            ^
-    
-    Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'tsx' imported from /Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter/
-        at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9)
-        at packageResolve (node:internal/modules/esm/resolve:764:81)
-        at moduleResolve (node:internal/modules/esm/resolve:855:18)
-        at defaultResolve (node:internal/modules/esm/resolve:988:11)
-        at #cachedDefaultResolve (node:internal/modules/esm/loader:697:20)
-        at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:714:38)
-        at ModuleLoader.resolveSync (node:internal/modules/esm/loader:746:52)
-        at #resolve (node:internal/modules/esm/loader:679:17)
-        at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:599:35)
-        at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:628:32) {
-      code: 'ERR_MODULE_NOT_FOUND'
-    }
-    
-    Node.js v25.8.0
-    ✖ test/quality.test.ts (61.4135ms)
-    node:internal/modules/package_json_reader:301
-      throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
-            ^
-    
-    Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'tsx' imported from /Users/roger/Developer/my-opensource/.rc-readiness-worktrees/ossmeter/
-        at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9)
-        at packageResolve (node:internal/modules/esm/resolve:764:81)
-        at moduleResolve (node:internal/modules/esm/resolve:855:18)
-        at defaultResolve (node:internal/modules/esm/resolve:988:11)
-        at #cachedDefaultResolve (node:internal/modules/esm/loader:697:20)
-        at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:714:38)
-        at ModuleLoader.resolveSync (node:internal/modules/esm/loader:746:52)
-        at #resolve (node:internal/modules/esm/loader:679:17)
-        at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:599:35)
-        at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:628:32) {
-      code: 'ERR_MODULE_NOT_FOUND'
-    }
-    
-    Node.js v25.8.0
-    ✖ test/scanner.test.ts (62.478375ms)
-    ℹ tests 4
+    ✔ discoverGitRepositories finds nested git worktrees and skips non-repos (14.119916ms)
+    ✔ formatTable renders summary and dirty worktree state (0.594625ms)
+    ✔ formatMarkdown renders automation-friendly metric table (0.091709ms)
+    ✔ collectQualitySignals scores common project hygiene files (5.952708ms)
+    ✔ scanWorkspace aggregates commits, branches, quality and dirty state (95.744084ms)
+    ℹ tests 5
     ℹ suites 0
-    ℹ pass 0
-    ℹ fail 4
+    ℹ pass 5
+    ℹ fail 0
     ℹ cancelled 0
     ℹ skipped 0
     ℹ todo 0
-    ℹ duration_ms 71.4915
-    
-    ✖ failing tests:
-    
-    test at test/discover.test.ts:1:1
-    ✖ test/discover.test.ts (62.290084ms)
-      'test failed'
-    
-    test at test/format.test.ts:1:1
-    ✖ test/format.test.ts (62.312917ms)
-      'test failed'
-    
-    test at test/quality.test.ts:1:1
-    ✖ test/quality.test.ts (61.4135ms)
-      'test failed'
-    
-    test at test/scanner.test.ts:1:1
-    ✖ test/scanner.test.ts (62.478375ms)
-      'test failed'
-    FAIL: package script: test
+    ℹ duration_ms 238.297584
+    PASS: package script: test
     
     > ossmeter@0.1.0 build
     > tsc -p tsconfig.json
     
-    error TS2688: Cannot find type definition file for 'node'.
-      The file is in the program because:
-        Entry point of type library 'node' specified in compilerOptions
-    FAIL: package script: build
+    PASS: package script: build
     NOTE: agent-qc not installed; skipping optional agent check
     
-    Validation failed.
+    Validation passed.
     ```
-    RESULT: 1 (1s)
+    RESULT: 0 (2s)
     
     ## ReleaseBox check
     ```
