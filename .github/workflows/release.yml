@@ -91,7 +91,7 @@ jobs:
             git log --oneline "$RANGE_START..HEAD" >> RELEASE_NOTES.md
           fi
       - name: Create or repair GitHub release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ env.RELEASE_TAG }}
           body_path: release-source/RELEASE_NOTES.md
