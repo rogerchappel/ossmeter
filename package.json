@@ -29,7 +29,8 @@
     "package:smoke": "npm run build && node scripts/package-smoke.mjs .",
     "release:check": "npm run check && npm test && npm run smoke && npm run package:smoke && releasebox check && npm pack --dry-run",
     "release:notes": "releasebox notes",
-    "fixtures": "node scripts/seed-fixtures.mjs"
+    "fixtures": "node scripts/seed-fixtures.mjs",
+    "release:readiness": "node scripts/validate-release-readiness.mjs"
   },
   "keywords": [
     "oss",
