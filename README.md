@@ -99,6 +99,17 @@ node dist/cli.js scan .tmp/workspace-alpha --json --include-all-time
 
 If you find a security issue, follow [SECURITY.md](SECURITY.md).
 
+## Release readiness
+
+Run the same checks that CI uses before opening a release PR:
+
+```sh
+npm run release:readiness
+npm run release:check
+```
+
+`release:readiness` validates repository metadata, the package files allowlist, package smoke coverage, and CI placeholder cleanup. `release:check` runs the project build, test, smoke, and package dry-run checks where configured.
+
 ## Contributing
 
 Small, verified changes are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
