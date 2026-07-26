@@ -120,6 +120,8 @@ npm run release:check
 
 `release:readiness` validates repository metadata, the package files allowlist, package smoke coverage, and CI placeholder cleanup. `release:check` runs the project build, test, smoke, and package dry-run checks where configured.
 
+Maintainers should follow [docs/RELEASING.md](docs/RELEASING.md) for npm trusted-publisher setup, tag creation, verification, and recovery.
+
 ## Contributing
 
 Small, verified changes are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
