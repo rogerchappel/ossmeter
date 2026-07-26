@@ -6,14 +6,16 @@ on:
       - 'v*.*.*'
 
 permissions:
-  contents: write
-  id-token: write
+  contents: read
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  release:
+  publish-npm:
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -26,7 +28,6 @@ jobs:
           registry-url: https://registry.npmjs.org
       - run: npm ci
       - run: npm run release:check
-      - run: npm pack
       - name: Publish package to npm
         run: |
           PACKAGE_SPEC="$(node -p "require('./package.json').name + '@' + require('./package.json').version")"
@@ -35,6 +36,23 @@ jobs:
           else
             npm publish --access public --provenance
           fi
+
+  github-release:
+    needs: publish-npm
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run release:check
+      - run: npm pack
       - name: Generate release notes
         run: |
           if ! npm run release:notes --if-present -- . > RELEASE_NOTES.md || [ ! -s RELEASE_NOTES.md ]; then
