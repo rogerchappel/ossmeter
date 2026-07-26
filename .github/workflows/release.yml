@@ -6,13 +6,16 @@ on:
       - 'v*.*.*'
 
 permissions:
-  contents: write
+  contents: read
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  release:
+  publish-npm:
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -20,7 +23,34 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: 24
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - name: Verify tag matches package version
+        run: test "$GITHUB_REF_NAME" = "v$(node -p "require('./package.json').version")"
+      - run: npm ci
+      - run: npm run release:check
+      - name: Publish package to npm
+        run: |
+          PACKAGE_SPEC="$(node -p "require('./package.json').name + '@' + require('./package.json').version")"
+          if npm view "$PACKAGE_SPEC" version --json >/dev/null 2>&1; then
+            echo "$PACKAGE_SPEC is already published; skipping npm publish."
+          else
+            npm publish --access public --provenance
+          fi
+
+  github-release:
+    needs: publish-npm
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
           cache: npm
       - run: npm ci
       - run: npm run release:check
