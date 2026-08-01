@@ -7,13 +7,18 @@ This project values small, reviewable contributions with clear verification. Kee
 ## Development
 
 ```sh
-npm install
+npm ci
 npm test
 npm run check
 npm run build
 npm run smoke
 bash scripts/validate.sh
 ```
+
+Before committing dependency changes, update the direct package with `npm
+install --save-dev <package>@<version>`, then run `npm audit` and the checks
+above. Dependabot checks the npm ecosystem weekly and limits concurrent update
+pull requests so dependency drift stays visible without overwhelming review.
 
 ## Pull Requests
 
