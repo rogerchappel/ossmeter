@@ -55,7 +55,7 @@ Options:
 - `--table` forces the default terminal table.
 - `--since <date>` passes a local git date expression to `git log --since`.
 - `--include-all-time` counts all commits in each local repo.
-- `--max-depth <n>` limits workspace discovery depth; default is `3`.
+- `--max-depth <n>` limits workspace discovery depth; default is `3`. Discovery includes both ordinary repositories and linked Git worktrees.
 
 ## Metrics
 
