@@ -1,5 +1,6 @@
 import { readdir, stat } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
+import { isGitRepository } from './git.js';
 
 const ignoredDirectories = new Set(['.git', 'node_modules', 'dist', '.next', '.turbo', 'coverage']);
 
@@ -17,7 +18,8 @@ export async function discoverGitRepositories(workspace: string, maxDepth: numbe
       return;
     }
 
-    if (entries.some((entry) => entry.isDirectory() && entry.name === '.git')) {
+    const gitEntry = entries.find((entry) => entry.name === '.git');
+    if (gitEntry?.isDirectory() || (gitEntry?.isFile() && await isGitRepository(dir))) {
       repos.add(dir);
       return;
     }
