@@ -4,7 +4,7 @@ ossmeter is intentionally boring: it reads local git repositories and explains e
 
 ## Workspace discovery
 
-A workspace is a folder that may contain one or more git repositories. Discovery walks subdirectories up to `--max-depth` and treats any directory containing `.git` as a repo. Common generated folders such as `node_modules`, `dist`, and `coverage` are skipped.
+A workspace is a folder that may contain one or more git repositories. Discovery walks subdirectories up to `--max-depth` and recognizes both ordinary repositories (whose `.git` metadata is a directory) and valid linked Git worktrees (whose `.git` metadata is a file). Arbitrary `.git` files are ignored. Common generated folders such as `node_modules`, `dist`, and `coverage` are skipped.
 
 ## Commit window
 
