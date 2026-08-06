@@ -8,6 +8,8 @@ on:
       - package.json
       - package-lock.json
       - scripts/package-smoke.mjs
+      - scripts/release-helpers.mjs
+      - test/release-helpers.test.ts
       - .github/workflows/release*.yml
 
 env:
