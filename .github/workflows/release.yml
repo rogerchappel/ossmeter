@@ -4,64 +4,94 @@ on:
   push:
     tags:
       - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing v<version> tag to recover
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
 
 jobs:
-  publish-npm:
-    permissions:
-      contents: read
-      id-token: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 24
-          cache: npm
-          registry-url: https://registry.npmjs.org
-      - name: Verify tag matches package version
-        run: test "$GITHUB_REF_NAME" = "v$(node -p "require('./package.json').version")"
-      - run: npm ci
-      - run: npm run release:check
-      - name: Publish package to npm
-        run: |
-          PACKAGE_SPEC="$(node -p "require('./package.json').name + '@' + require('./package.json').version")"
-          if npm view "$PACKAGE_SPEC" version --json >/dev/null 2>&1; then
-            echo "$PACKAGE_SPEC is already published; skipping npm publish."
-          else
-            npm publish --access public --provenance
-          fi
-
-  github-release:
-    needs: publish-npm
+  release:
     permissions:
       contents: write
+      id-token: write
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: release-source
     steps:
-      - uses: actions/checkout@v5
+      - name: Check out release automation
+        uses: actions/checkout@v5
+        with:
+          path: automation
+      - name: Check out exact release tag
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          ref: ${{ env.RELEASE_TAG }}
+          path: release-source
       - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
+          cache-dependency-path: release-source/package-lock.json
+          registry-url: https://registry.npmjs.org
+      - name: Verify exact tag and package version
+        run: |
+          test "$(git tag --points-at HEAD | grep -Fx "$RELEASE_TAG")" = "$RELEASE_TAG"
+          node ../automation/scripts/release-helpers.mjs verify-tag "$RELEASE_TAG"
       - run: npm ci
       - run: npm run release:check
-      - run: npm pack
+      - name: Build release artifact
+        id: artifact
+        run: |
+          TARBALL="$(npm pack --json | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>process.stdout.write(JSON.parse(s)[0].filename))")"
+          test -f "$TARBALL"
+          echo "tarball=$TARBALL" >> "$GITHUB_OUTPUT"
+      - name: Publish exact version when absent
+        env:
+          TARBALL: ${{ steps.artifact.outputs.tarball }}
+        run: |
+          PACKAGE_SPEC="$(node ../automation/scripts/release-helpers.mjs verify-tag "$RELEASE_TAG")"
+          set +e
+          VERSION_JSON="$(npm view "$PACKAGE_SPEC" version --json 2>npm-view-error.log)"
+          VIEW_STATUS=$?
+          set -e
+          if [ "$VIEW_STATUS" -eq 0 ]; then
+            node ../automation/scripts/release-helpers.mjs published-matches "${RELEASE_TAG#v}" "$VERSION_JSON"
+            echo "$PACKAGE_SPEC is already published; skipping npm publish."
+          elif grep -q 'E404' npm-view-error.log; then
+            npm publish "$TARBALL" --access public --provenance
+          else
+            cat npm-view-error.log >&2
+            exit "$VIEW_STATUS"
+          fi
+      - name: Verify registry artifact and packaged CLI
+        env:
+          TARBALL: ${{ steps.artifact.outputs.tarball }}
+        run: |
+          PACKAGE_SPEC="$(node ../automation/scripts/release-helpers.mjs verify-tag "$RELEASE_TAG")"
+          VERSION_JSON="$(npm view "$PACKAGE_SPEC" version --json)"
+          node ../automation/scripts/release-helpers.mjs published-matches "${RELEASE_TAG#v}" "$VERSION_JSON"
+          test "$(npm view "$PACKAGE_SPEC" dist.integrity)" = "$(node ../automation/scripts/release-helpers.mjs integrity "$TARBALL")"
+          npm exec --yes --package "./$TARBALL" -- ossmeter --help
       - name: Generate release notes
         run: |
           if ! npm run release:notes --if-present -- . > RELEASE_NOTES.md || [ ! -s RELEASE_NOTES.md ]; then
             echo "## Changes" > RELEASE_NOTES.md
             git log --oneline $(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo HEAD~20)..HEAD >> RELEASE_NOTES.md
           fi
-      - uses: softprops/action-gh-release@v2
+      - name: Create or repair GitHub release
+        uses: softprops/action-gh-release@v2
         with:
-          body_path: RELEASE_NOTES.md
-          files: '*.tgz'
+          tag_name: ${{ env.RELEASE_TAG }}
+          body_path: release-source/RELEASE_NOTES.md
+          files: release-source/${{ steps.artifact.outputs.tarball }}
