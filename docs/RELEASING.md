@@ -51,9 +51,18 @@ Replace `0.2.0` with the released version. The `npx` command must exit
 successfully and display the packaged CLI help.
 
 If npm publishing fails, first verify the trusted-publisher values above and
-that the tag version exactly matches `package.json`, then re-run the failed
-workflow job. Re-runs are safe: the workflow skips npm publishing when that
-exact package version already exists and continues creating or repairing the
-GitHub release. npm versions are immutable; if the published tarball is wrong,
+that the tag version exactly matches `package.json`. Re-run a failed job, or
+recover an older tag that has no publish run with:
+
+```sh
+gh workflow run release.yml --repo rogerchappel/ossmeter -f tag=v0.1.0
+```
+
+The recovery path checks out the existing tag without moving or recreating it,
+requires its version to exactly match `package.json`, and builds one tarball.
+It publishes that artifact with provenance only when the exact npm version is
+absent, verifies the registry integrity and packaged `ossmeter --help`, then
+creates or repairs the matching GitHub release with the same artifact. Re-runs
+are therefore safe. npm versions are immutable; if the published tarball is wrong,
 deprecate that version, prepare a corrected patch version, and create a new
 matching tag rather than attempting to overwrite it.
