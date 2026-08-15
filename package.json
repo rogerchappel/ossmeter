@@ -46,7 +46,7 @@
     "node": ">=20.10"
   },
   "devDependencies": {
-    "@types/node": "^22.15.3",
+    "@types/node": "^26.2.0",
     "releasebox": "https://github.com/rogerchappel/releasebox/releases/download/v0.1.0/releasebox-0.1.0.tgz",
     "tsx": "^4.23.1",
     "typescript": "^5.8.3"
