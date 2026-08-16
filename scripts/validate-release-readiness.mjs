@@ -16,6 +16,32 @@ requireField(Array.isArray(packageJson.files) && packageJson.files.length > 0, '
 requireField(scripts['package:smoke'], 'package.json scripts must include package:smoke');
 requireField(scripts['release:check'], 'package.json scripts must include release:check');
 
+const agentsPath = path.join(root, 'AGENTS.md');
+requireField(fs.existsSync(agentsPath), 'repository must include AGENTS.md');
+
+if (fs.existsSync(agentsPath)) {
+  const agents = fs.readFileSync(agentsPath, 'utf8');
+  const requiredProjectContext = {
+    Repository: /github\.com\/rogerchappel\/ossmeter/,
+    'Primary maintainer': /Roger Chappel/,
+    'Default branch': /\bmain\b/,
+    'Package manager': /\bnpm\b/,
+  };
+
+  for (const [label, expected] of Object.entries(requiredProjectContext)) {
+    const line = agents.match(new RegExp(`^- ${label}:\\s*(.+)$`, 'm'))?.[1]?.trim();
+    requireField(Boolean(line && line !== '``'), `AGENTS.md must declare a non-empty ${label} value`);
+    if (line && line !== '``') {
+      requireField(expected.test(line), `AGENTS.md ${label} must reference ${expected.source}`);
+    }
+  }
+
+  requireField(
+    /Branch from the latest `main` before editing\./.test(agents),
+    'AGENTS.md branch policy must instruct contributors to branch from main',
+  );
+}
+
 const workflowDir = path.join(root, '.github', 'workflows');
 if (fs.existsSync(workflowDir)) {
   const workflowFiles = fs.readdirSync(workflowDir).filter((file) => /\.ya?ml$/.test(file));
