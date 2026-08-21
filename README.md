@@ -10,19 +10,21 @@ OSS sprints can get noisy fast. A raw commit count is easy to game and hard to t
 
 ## Install
 
-```sh
-npm install -g ossmeter
-```
-
-For local development:
+ossmeter is not yet published to the npm registry. Install the package from a
+fresh source checkout and its locally built tarball:
 
 ```sh
 git clone https://github.com/rogerchappel/ossmeter.git
 cd ossmeter
-npm install
+npm ci
 npm run build
-node dist/cli.js scan . --include-all-time
+npm pack
+npm install --global ./ossmeter-0.1.0.tgz
+ossmeter --help
 ```
+
+The tarball name follows the version in `package.json`. Remove it after
+installation if you do not need to retain the release candidate.
 
 ## Quickstart
 
