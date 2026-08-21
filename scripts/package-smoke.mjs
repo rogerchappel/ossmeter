@@ -7,9 +7,23 @@ import { basename, join, resolve } from 'node:path';
 const root = resolve(process.argv[2] ?? '.');
 const tmp = await mkdtemp(join(tmpdir(), 'ossmeter-package-smoke-'));
 const manifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
+const readme = await readFile(join(root, 'README.md'), 'utf8');
 let tarball;
 
 try {
+  if (/npm install (?:--global|-g) ossmeter/.test(readme)) {
+    throw new Error('README must not advertise an unpublished registry install');
+  }
+  for (const command of [
+    'npm ci',
+    'npm run build',
+    'npm pack',
+    `npm install --global ./ossmeter-${manifest.version}.tgz`,
+    'ossmeter --help'
+  ]) {
+    if (!readme.includes(command)) throw new Error(`README is missing tested install command: ${command}`);
+  }
+
   const packJson = execFileSync('npm', ['pack', '--json'], { cwd: root, encoding: 'utf8' });
   const [pack] = JSON.parse(packJson);
   tarball = join(root, pack.filename);
