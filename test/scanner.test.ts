@@ -41,3 +41,26 @@ test('scanWorkspace aggregates commits, branches, quality and dirty state', asyn
   assert.equal(report.repositories[0]?.untrackedFiles, 1);
   assert.ok((report.repositories[0]?.quality.score ?? 0) >= 60);
 });
+
+test('scanWorkspace does not score empty quality-signal paths', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'ossmeter-empty-signals-'));
+  const repo = join(root, 'empty-signals');
+  await mkdir(join(repo, '.git'), { recursive: true });
+  await git(repo, ['init', '-b', 'main']);
+  await mkdir(join(repo, 'test'));
+  await mkdir(join(repo, '.github', 'workflows'), { recursive: true });
+  await mkdir(join(repo, 'README.md'));
+  await writeFile(join(repo, 'LICENSE'), '');
+  await mkdir(join(repo, 'package.json'));
+
+  const report = await scanWorkspace({ workspace: root, includeAllTime: true, maxDepth: 2 });
+  assert.equal(report.repositories[0]?.quality.score, 0);
+  assert.deepEqual(report.repositories[0]?.quality, {
+    score: 0,
+    hasTests: false,
+    hasCi: false,
+    hasReadme: false,
+    hasLicense: false,
+    hasPackageMetadata: false
+  });
+});
