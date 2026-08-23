@@ -8,6 +8,8 @@ Local-first OSS sprint metrics for folders full of git repositories.
 
 OSS sprints can get noisy fast. A raw commit count is easy to game and hard to trust. ossmeter gives you a quick scoreboard that stays on your machine and combines velocity with quality signals.
 
+Quality signals require non-empty regular files. Recognized metadata files are `package.json`, `pyproject.toml`, and `Cargo.toml`; documentation uses `README.md` or `readme.md`, and licenses use `LICENSE` or `LICENSE.md`. Tests require a `*.test.*` or `*.spec.*` JavaScript/TypeScript file under `test`, `tests`, `__tests__`, or `spec` (or at the repository root). CI requires a non-empty `.yml`/`.yaml` workflow or `.gitlab-ci.yml`.
+
 ## Install
 
 ossmeter is not yet published to the npm registry. Install the package from a
