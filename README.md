@@ -57,9 +57,9 @@ Options:
 - `--json` emits stable JSON for agents and automation.
 - `--markdown` emits a Markdown summary/table for reports.
 - `--table` forces the default terminal table.
-- `--since <date>` passes a local git date expression to `git log --since`.
+- `--since <date>` passes the next non-option value as a local git date expression to `git log --since`.
 - `--include-all-time` counts all commits in each local repo.
-- `--max-depth <n>` limits workspace discovery depth; default is `3`. Discovery includes both ordinary repositories and linked Git worktrees.
+- `--max-depth <n>` limits workspace discovery depth; `<n>` must be an entire non-negative decimal integer such as `0` or `3`, and the default is `3`. Discovery includes both ordinary repositories and linked Git worktrees.
 
 ## Metrics
 
