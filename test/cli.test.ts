@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { parseArgs } from '../src/cli.js';
+import { parseArgs } from '../src/cli-args.js';
 
 test('parseArgs accepts complete non-negative max-depth values', () => {
   assert.equal(parseArgs(['scan', '.', '--max-depth', '0']).maxDepth, 0);
@@ -11,7 +11,7 @@ test('parseArgs rejects partial and invalid max-depth values', () => {
   for (const value of ['2oops', '1.5', '-1', '+1', '1e2', '']) {
     assert.throws(
       () => parseArgs(['scan', '.', '--max-depth', value]),
-      /--max-depth requires a non-negative integer/,
+      /--max-depth requires (?:a value|a non-negative integer)/,
       value || '<empty>',
     );
   }
@@ -20,7 +20,7 @@ test('parseArgs rejects partial and invalid max-depth values', () => {
 test('parseArgs does not consume options as option values', () => {
   for (const option of ['--json', '--markdown', '--table']) {
     assert.throws(() => parseArgs(['scan', '.', '--since', option]), /--since requires a value/);
-    assert.throws(() => parseArgs(['scan', '.', '--max-depth', option]), /--max-depth requires a non-negative integer/);
+    assert.throws(() => parseArgs(['scan', '.', '--max-depth', option]), /--max-depth requires a value/);
   }
 });
 
