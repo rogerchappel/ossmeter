@@ -12,21 +12,17 @@ Quality signals require non-empty regular files. Recognized metadata files are `
 
 ## Install
 
-ossmeter is not yet published to the npm registry. Install the package from a
-fresh source checkout and its locally built tarball:
+ossmeter is not yet published to the npm registry. Install the existing GitHub
+release tarball directly:
 
 ```sh
-git clone https://github.com/rogerchappel/ossmeter.git
-cd ossmeter
-npm ci
-npm run build
-npm pack
-npm install --global ./ossmeter-0.1.0.tgz
+npm install --global https://github.com/rogerchappel/ossmeter/releases/download/v0.1.0/ossmeter-0.1.0.tgz
 ossmeter --help
 ```
 
-The tarball name follows the version in `package.json`. Remove it after
-installation if you do not need to retain the release candidate.
+The release tag and tarball name follow the version in `package.json`. Once the
+package is published to the npm registry, this section can switch to the shorter
+`npm install --global ossmeter` or `npx ossmeter` form.
 
 ## Quickstart
 

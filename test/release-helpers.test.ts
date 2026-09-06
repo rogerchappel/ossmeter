@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { publishedVersionMatches, verifyTagVersion, versionFromTag } from '../scripts/release-helpers.mjs';
+import {
+  githubReleaseTarballUrl,
+  publishedVersionMatches,
+  verifyTagVersion,
+  versionFromTag,
+} from '../scripts/release-helpers.mjs';
 
 test('release tag must be a version tag', () => {
   assert.equal(versionFromTag('v0.1.0'), '0.1.0');
@@ -17,4 +22,11 @@ test('exact-version registry output is verified', () => {
   assert.equal(publishedVersionMatches('0.1.0', '"0.1.0"'), true);
   assert.equal(publishedVersionMatches('0.1.0', '["0.1.0"]'), true);
   assert.equal(publishedVersionMatches('0.1.0', '"0.1.1"'), false);
+});
+
+test('GitHub release tarball URL follows package metadata', () => {
+  assert.equal(
+    githubReleaseTarballUrl('git+https://github.com/rogerchappel/ossmeter.git', 'ossmeter', '0.1.0'),
+    'https://github.com/rogerchappel/ossmeter/releases/download/v0.1.0/ossmeter-0.1.0.tgz',
+  );
 });
