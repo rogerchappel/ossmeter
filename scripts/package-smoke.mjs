@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdtemp, readFile, rm, unlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, join, resolve } from 'node:path';
+import { githubReleaseTarballUrl } from './release-helpers.mjs';
 
 const root = resolve(process.argv[2] ?? '.');
 const tmp = await mkdtemp(join(tmpdir(), 'ossmeter-package-smoke-'));
@@ -11,16 +12,12 @@ const readme = await readFile(join(root, 'README.md'), 'utf8');
 let tarball;
 
 try {
-  if (/npm install (?:--global|-g) ossmeter/.test(readme)) {
+  if (/^npm install (?:--global|-g) ossmeter$/m.test(readme)) {
     throw new Error('README must not advertise an unpublished registry install');
   }
-  for (const command of [
-    'npm ci',
-    'npm run build',
-    'npm pack',
-    `npm install --global ./ossmeter-${manifest.version}.tgz`,
-    'ossmeter --help'
-  ]) {
+  const repository = typeof manifest.repository === 'string' ? manifest.repository : manifest.repository?.url;
+  const releaseTarballUrl = githubReleaseTarballUrl(repository, manifest.name, manifest.version);
+  for (const command of [`npm install --global ${releaseTarballUrl}`, 'ossmeter --help']) {
     if (!readme.includes(command)) throw new Error(`README is missing tested install command: ${command}`);
   }
 

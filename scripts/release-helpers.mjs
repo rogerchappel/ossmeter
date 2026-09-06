@@ -16,6 +16,12 @@ export function verifyTagVersion(tag, packageVersion) {
   return tagVersion;
 }
 
+export function githubReleaseTarballUrl(repository, packageName, packageVersion) {
+  const slug = repository.replace(/^git\+https:\/\/github\.com\//, '').replace(/\.git$/, '');
+  const tag = `v${packageVersion}`;
+  return `https://github.com/${slug}/releases/download/${tag}/${packageName}-${packageVersion}.tgz`;
+}
+
 export function publishedVersionMatches(expected, npmOutput) {
   const value = JSON.parse(npmOutput);
   return value === expected || (Array.isArray(value) && value.includes(expected));
