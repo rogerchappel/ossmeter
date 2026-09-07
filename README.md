@@ -75,6 +75,7 @@ ossmeter does not call GitHub, package registries, telemetry services, or any ne
 ## Verify
 
 ```sh
+npm ci
 npm test
 npm run check
 npm run build
